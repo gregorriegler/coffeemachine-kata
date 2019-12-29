@@ -8,10 +8,12 @@ import java.util.Map;
 
 public class DrinkMachine {
 
-    private static List<Drink> drinkList = new ArrayList<Drink>();
-    private static List<Ingredient> ingredientList = new ArrayList<Ingredient>();
+    private static List<Drink> drinkList;
+    private static List<Ingredient> ingredientList;
 
     public static void main(String[] args) {
+        drinkList = new ArrayList<>();
+        ingredientList = new ArrayList<>();
         addAllIngredients();
         addAllDrinks();
         updateCosts();
@@ -35,7 +37,7 @@ public class DrinkMachine {
                 if (input.equals("")) {
                     continue;
                 } else if (input.equals("q")) {
-                    System.exit(0);
+                    break;
                 } else if (input.equals("r")) {
                     restockIngredients();
                     updateMakeable();
