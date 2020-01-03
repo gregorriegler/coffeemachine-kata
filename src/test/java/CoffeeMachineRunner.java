@@ -10,7 +10,7 @@ public class CoffeeMachineRunner {
     }
 
     public static void main(String[] args) {
-        Seamer.persist((Signature1<String, String>) input -> run(input), CoffeeMachineRunner.class, "CoffeeMachine")
+        Seamer.persist((Signature1<String, String>) CoffeeMachineRunner::run, CoffeeMachineRunner.class, "CoffeeMachine")
             .recordInvocation("1\nq\n")
             .recordInvocation("1\n1\n1\n1\nq\n")
             .recordInvocation("2\nr\nq\n")
