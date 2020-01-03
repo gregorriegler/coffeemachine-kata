@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class DrinkMachine {
+public class CoffeeMachine {
 
     private static List<Drink> drinkList = new ArrayList<Drink>();
     private static List<Ingredient> ingredientList = new ArrayList<Ingredient>();
