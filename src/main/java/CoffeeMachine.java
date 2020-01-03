@@ -23,13 +23,9 @@ public class CoffeeMachine {
     public static void startIO() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String input = "";
-        //running loop
+
         while (true) {
             try {
-                /*I considered using a switch here for more readable code. Elected to have a dynamic drink menu so drinks can be added
-                 * to addAllDrinks() and this loop would not have to be change. The decision to have slightly less readable code
-                 * in favor of a dynamic menu was made upon my belief that easily modifiable code is incredibly important.
-                 */
                 input = reader.readLine().toLowerCase();
 
                 if (input.equals("")) {
@@ -42,16 +38,15 @@ public class CoffeeMachine {
                 } else if (Integer.parseInt(input) > 0 && Integer.parseInt(input) <= drinkList.size()) { //dynamic drink menu selection
                     makeDrink(drinkList.get(Integer.parseInt(input) - 1));
                 } else {
-                    throw new IOException();//legal, but invalid input
+                    throw new IOException(); //legal, but invalid input
                 }
             } catch (Exception e) {
-                System.out.print("Invalid selection: " + input + ". Try again: ");//illegal input
+                System.out.print("Invalid selection: " + input + ". Try again: "); //illegal input
             }
-        }//running loop     
+        }
     }
 
     public static void display() {
-        //The sample IO in the assignment appears to add a blank line after output, so I included that.
         System.out.println("Inventory:");
         for (Ingredient i : ingredientList) {
             System.out.println(i.getName() + "," + i.getStock());
@@ -73,11 +68,11 @@ public class CoffeeMachine {
             for (Ingredient i : ingredientList) {
                 if (currRecipe.containsKey(i.getName()) && i.getStock() < currRecipe.get(i.getName())) {
                     d.setMakeable(false);
-                    break;//check next drink
+                    break;
                 }
                 d.setMakeable(true);
-            }//Ingredient loop
-        }//Drink loop
+            }
+        }
     }
 
     public static void updateCosts() {
@@ -88,9 +83,9 @@ public class CoffeeMachine {
                 if (currRecipe.containsKey(i.getName())) {
                     currCost += i.getCost() * currRecipe.get(i.getName());
                 }
-            }//inner
+            }
             d.setCost(currCost);
-        }//outer
+        }
     }
 
     public static void makeDrink(Drink drink) {
@@ -116,12 +111,10 @@ public class CoffeeMachine {
         display();
     }
 
-    //Add ingredients through addAllIngredients
     public static void addIngredient(Ingredient ingredient) {
         ingredientList.add(ingredient);
     }
 
-    //Add drinks through addAllDrinks
     public static void addDrink(String name, String[] recipe) {
         drinkList.add(new Drink(name, recipe));
     }
