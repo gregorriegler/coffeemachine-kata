@@ -12,17 +12,23 @@ public class CoffeeMachine {
     private static List<Ingredient> ingredientList;
 
     public static void main(String[] args) {
+        // model
         drinkList = new ArrayList<>();
         ingredientList = new ArrayList<>();
         addAllIngredients();
         addAllDrinks();
         updateCosts();
         updateMakeable();
-        display();
-        startIO();
+
+        // view
+        CliView view = new CliView();
+        view.askForSelection(ingredientList, drinkList);
+
+        // controller
+        control(view);
     }
 
-    public static void startIO() {
+    public static void control(CliView view) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String input = "";
 
@@ -35,33 +41,18 @@ public class CoffeeMachine {
                 } else if (input.equals("q")) {
                     break;
                 } else if (input.equals("r")) {
-                    restockIngredients();
+                    restockIngredients(view);
                     updateMakeable();
                 } else if (Integer.parseInt(input) > 0 && Integer.parseInt(input) <= drinkList.size()) { //dynamic drink menu selection
-                    makeDrink(drinkList.get(Integer.parseInt(input) - 1));
+                    makeDrink(drinkList.get(Integer.parseInt(input) - 1), view);
                 } else {
                     throw new IOException();//legal, but invalid input
                 }
+                view.askForSelection(ingredientList, drinkList);
             } catch (Exception e) {
-                System.out.print("Invalid selection: " + input + ". Try again: ");//illegal input
+                view.showInvalidSelection(input);//illegal input
             }
         }
-    }
-
-    public static void display() {
-        System.out.println("Inventory:");
-        for (Ingredient i : ingredientList) {
-            System.out.println(i.getName() + "," + i.getStock());
-        }
-
-        System.out.println("\nMenu:");
-        int count = 1;
-        for (Drink d : drinkList) {
-            System.out.printf("%d,%s,$%.2f," + d.getMakeable() + "\n", count, d.getName(), d.getCost());
-            count++;
-        }
-
-        System.out.print("\nYour selection: ");
     }
 
     public static void updateMakeable() {
@@ -90,27 +81,25 @@ public class CoffeeMachine {
         }
     }
 
-    public static void makeDrink(Drink drink) {
+    public static void makeDrink(Drink drink, CliView view) {
         if (drink.getMakeable()) {
-            System.out.println("Dispensing: " + drink.getName() + "\n");
+            view.showDispensingDrink(drink);
             for (Ingredient i : ingredientList) {
                 if (drink.getRecipe().containsKey(i.getName())) {
                     i.setStock(i.getStock() - drink.getRecipe().get(i.getName()));
                 }
             }
         } else {
-            System.out.println("Out of stock: " + drink.getName() + "\n");
+            view.showOutOfStock(drink);
         }
         updateMakeable();
-        display();
     }
 
-    public static void restockIngredients() {
+    public static void restockIngredients(CliView view) {
         for (Ingredient i : ingredientList) {
             i.setStock(10);
         }
         updateMakeable();
-        display();
     }
 
     public static void addIngredient(Ingredient ingredient) {
