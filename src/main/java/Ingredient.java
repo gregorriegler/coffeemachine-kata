@@ -1,7 +1,7 @@
 public class Ingredient implements Comparable<Ingredient> {
-    private String name = "";
-    private double cost = 0.00;
-    private int stock = 0;
+    private String name;
+    private double cost;
+    private int stock;
 
     public Ingredient(String name, double cost) {
         this.name = name;
@@ -11,14 +11,6 @@ public class Ingredient implements Comparable<Ingredient> {
 
     public int compareTo(Ingredient ingredient) {
         return name.compareTo(ingredient.getName());
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setCost(double cost) {
-        this.cost = cost;
     }
 
     public void setStock(int stock) {
@@ -37,4 +29,11 @@ public class Ingredient implements Comparable<Ingredient> {
         return stock;
     }
 
+    public void consume(Integer neededAmount) {
+        this.stock = stock - neededAmount;
+    }
+
+    public boolean hasAmount(Integer neededAmount) {
+        return stock >= neededAmount;
+    }
 }

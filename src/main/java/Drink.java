@@ -1,11 +1,11 @@
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Drink implements Comparable<Drink> {
-    private Map<String, Integer> recipe = new HashMap<String, Integer>();//map ingredients to units per
+    private Map<String, Integer> recipe = new HashMap<>(); //map ingredients to units per
     private String name;
     private double totalCost = 0;
-    private boolean makeable = false;
 
     public Drink(String name, String[] recipe) {
         this.name = name;
@@ -26,16 +26,8 @@ public class Drink implements Comparable<Drink> {
         }
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public void setCost(double totalCost) {
         this.totalCost = totalCost;
-    }
-
-    public void setMakeable(boolean makeable) {
-        this.makeable = makeable;
     }
 
     public Map<String, Integer> getRecipe() {
@@ -50,8 +42,39 @@ public class Drink implements Comparable<Drink> {
         return name;
     }
 
-    public boolean getMakeable() {
-        return makeable;
+    public void make(List<Ingredient> ingredientList, CliView view) {
+        if (isMakeable(ingredientList)) {
+            view.showDispensingDrink(this);
+            for (Ingredient ingredient : ingredientList) {
+                consume(ingredient);
+            }
+        } else {
+            view.showOutOfStock(this);
+        }
+    }
+
+    public void consume(Ingredient ingredient) {
+        if (needed(ingredient)) {
+            ingredient.consume(neededAmount(ingredient));
+        }
+    }
+
+    public boolean needed(Ingredient ingredient) {
+        return recipe.containsKey(ingredient.getName());
+    }
+
+    public Integer neededAmount(Ingredient ingredient) {
+        return recipe.get(ingredient.getName());
+    }
+
+    public boolean isMakeable(List<Ingredient> ingredientList) {
+        return ingredientList.stream()
+            .filter(this::needed)
+            .allMatch(this::available);
+    }
+
+    public boolean available(Ingredient ingredient) {
+        return ingredient.hasAmount(neededAmount(ingredient));
     }
 
 }

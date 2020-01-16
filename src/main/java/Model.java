@@ -11,44 +11,26 @@ public class Model {
         addAllIngredients();
         addAllDrinks();
         updateCosts();
-        updateMakeable();
     }
 
     public void makeDrink(int drinkId, CliView view) {
+        drinkById(drinkId).make(ingredientList, view);
+    }
+
+    public Drink drinkById(int drinkId) {
+        assertDrinkExists(drinkId);
+        return drinkList.get(drinkId - 1);
+    }
+
+    public void assertDrinkExists(int drinkId) {
         if (drinkId <= 0 || drinkId > drinkList.size()) {
             throw new IllegalArgumentException();
         }
-        Drink drink = drinkList.get(drinkId - 1);
-        if (drink.getMakeable()) {
-            view.showDispensingDrink(drink);
-            for (Ingredient i : ingredientList) {
-                if (drink.getRecipe().containsKey(i.getName())) {
-                    i.setStock(i.getStock() - drink.getRecipe().get(i.getName()));
-                }
-            }
-        } else {
-            view.showOutOfStock(drink);
-        }
-        updateMakeable();
     }
 
     public void restockIngredients() {
         for (Ingredient i : ingredientList) {
             i.setStock(10);
-        }
-        updateMakeable();
-    }
-
-    public void updateMakeable() {
-        for (Drink d : drinkList) {
-            Map<String, Integer> currRecipe = d.getRecipe();
-            for (Ingredient i : ingredientList) {
-                if (currRecipe.containsKey(i.getName()) && i.getStock() < currRecipe.get(i.getName())) {
-                    d.setMakeable(false);
-                    break;
-                }
-                d.setMakeable(true);
-            }
         }
     }
 
