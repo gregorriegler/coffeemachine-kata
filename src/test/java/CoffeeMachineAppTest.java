@@ -1,6 +1,6 @@
 import com.gregorriegler.seamer.test.SeamerTest;
 
-public class CoffeeMachineTest extends SeamerTest {
+public class CoffeeMachineAppTest extends SeamerTest {
 
     @Override
     public Class<?> carrierClass() {

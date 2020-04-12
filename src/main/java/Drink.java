@@ -1,73 +1,29 @@
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.stream;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.summingInt;
+
 public class Drink implements Comparable<Drink> {
-    private Map<String, Integer> recipe = new HashMap<>(); //map ingredients to units per
-    private String name;
+    private final Map<String, Integer> recipe; //map ingredients to units per
+    public final String name;
 
     public Drink(String name, String[] recipe) {
         this.name = name;
-        setRecipe(recipe);
+        this.recipe = asMap(recipe);
+    }
+
+    public Integer neededAmount(String name) {
+        return this.recipe.getOrDefault(name, 0);
     }
 
     public int compareTo(Drink drink) {
-        return name.compareTo(drink.getName());
+        return name.compareTo(drink.name);
     }
 
-    public void setRecipe(String[] recipe) {
-        for (String s : recipe) {
-            if (this.recipe.containsKey(s)) {
-                this.recipe.put(s, this.recipe.get(s) + 1);//increment if multiple units
-            } else {
-                this.recipe.put(s, 1);//insert first occurrence of ingredient
-            }
-        }
+    private static Map<String, Integer> asMap(String[] recipe) {
+        return stream(recipe).collect(groupingBy(identity(), summingInt(e -> 1)));
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void make(List<Ingredient> ingredientList, CliView view) {
-        if (isMakeable(ingredientList)) {
-            view.showDispensingDrink(this);
-            for (Ingredient ingredient : ingredientList) {
-                consume(ingredient);
-            }
-        } else {
-            view.showOutOfStock(this);
-        }
-    }
-
-    public void consume(Ingredient ingredient) {
-        if (needed(ingredient)) {
-            ingredient.consume(neededAmount(ingredient));
-        }
-    }
-
-    public boolean needed(Ingredient ingredient) {
-        return recipe.containsKey(ingredient.getName());
-    }
-
-    public Integer neededAmount(Ingredient ingredient) {
-        return recipe.get(ingredient.getName());
-    }
-
-    public boolean isMakeable(List<Ingredient> ingredientList) {
-        return ingredientList.stream()
-            .filter(this::needed)
-            .allMatch(this::available);
-    }
-
-    public boolean available(Ingredient ingredient) {
-        return ingredient.hasAmount(neededAmount(ingredient));
-    }
-
-    public double cost(List<Ingredient> ingredientList) {
-        return ingredientList.stream()
-            .filter(ingredient -> recipe.containsKey(ingredient.getName()))
-            .mapToDouble(ingredient -> ingredient.getCost() * recipe.get(ingredient.getName()))
-            .sum();
-    }
 }
